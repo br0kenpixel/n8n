@@ -142,6 +142,10 @@ describe('formNodeUtils', () => {
 				description: '<style>body { display: none; }</style><b>visible</b>',
 				expected: '<b>visible</b>',
 			},
+			{
+				description: '<b style="color: red; text-align: center;">visible</b>',
+				expected: '<b style="color:red;text-align:center">visible</b>',
+			},
 		];
 
 		const formFields: FormFieldsParameter = [];

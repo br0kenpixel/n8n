@@ -135,7 +135,8 @@ describe('formCompletionUtils', () => {
 
 		it('should call sanitizeHtml on completionMessage', async () => {
 			const sanitizeHtmlSpy = jest.spyOn(utils, 'sanitizeHtml');
-			const maliciousMessage = '<script>alert("xss")</script>Safe message<b>bold</b>';
+			const maliciousMessage =
+				'<script>alert("xss")</script>Safe message<b style="color: red;">bold</b>';
 			const responseText = 'Response text';
 
 			mockWebhookFunctions.getNodeParameter.mockImplementation((parameterName: string) => {
@@ -150,12 +151,12 @@ describe('formCompletionUtils', () => {
 
 			await renderFormCompletion(mockWebhookFunctions, mockResponse, trigger);
 
-			expect(sanitizeHtmlSpy).toHaveBeenCalledWith(maliciousMessage);
+			expect(sanitizeHtmlSpy).toHaveBeenCalledWith(maliciousMessage, { allowStyles: true });
 			expect(sanitizeHtmlSpy).toHaveBeenCalledTimes(1);
 			expect(mockResponse.render).toHaveBeenCalledWith('form-trigger-completion', {
 				appendAttribution: undefined,
 				formTitle: 'Form Title',
-				message: 'Safe message<b>bold</b>',
+				message: 'Safe message<b style="color:red">bold</b>',
 				redirectUrl: undefined,
 				responseBinary: encodeURIComponent(JSON.stringify('')),
 				responseText: 'Response text',

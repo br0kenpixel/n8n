@@ -595,6 +595,10 @@ describe('FormTrigger, formWebhook', () => {
 		const formDescription = [
 			{ description: 'Test Description', expected: 'Test Description' },
 			{ description: '<i>hello</i>', expected: '<i>hello</i>' },
+			{
+				description: '<b style="color: red; text-align: center;">hello</b>',
+				expected: '<b style="color:red;text-align:center">hello</b>',
+			},
 			{ description: '<script>alert("hello world")</script>', expected: '' },
 		];
 		const formFields: FormFieldsParameter = [

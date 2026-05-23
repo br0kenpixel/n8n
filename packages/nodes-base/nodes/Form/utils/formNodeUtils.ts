@@ -29,7 +29,9 @@ export const renderFormNode = async (
 		title = context.evaluateExpression(`{{ $('${trigger?.name}').params.formTitle }}`) as string;
 	}
 
-	const description = handleNewlines(sanitizeHtml(options.formDescription ?? ''));
+	const description = handleNewlines(
+		sanitizeHtml(options.formDescription ?? '', { allowStyles: true }),
+	);
 
 	let buttonLabel = options.buttonLabel;
 	if (!buttonLabel) {

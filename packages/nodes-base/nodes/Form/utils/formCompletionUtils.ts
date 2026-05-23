@@ -48,7 +48,9 @@ export const renderFormCompletion = async (
 ): Promise<IWebhookResponseData> => {
 	const completionTitle = context.getNodeParameter('completionTitle', '') as string;
 	const completionMessage = handleNewlines(
-		sanitizeHtml(context.getNodeParameter('completionMessage', '') as string),
+		sanitizeHtml(context.getNodeParameter('completionMessage', '') as string, {
+			allowStyles: true,
+		}),
 	);
 	const redirectUrl = context.getNodeParameter('redirectUrl', '') as string;
 	const options = context.getNodeParameter('options', {}) as {

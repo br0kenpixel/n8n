@@ -667,7 +667,9 @@ export async function formWebhook(
 	if (method === 'GET') {
 		const formTitle = context.getNodeParameter('formTitle', '') as string;
 		const formDescription = handleNewlines(
-			sanitizeHtml(context.getNodeParameter('formDescription', '') as string),
+			sanitizeHtml(context.getNodeParameter('formDescription', '') as string, {
+				allowStyles: true,
+			}),
 		);
 		let responseMode = context.getNodeParameter('responseMode', '') as string;
 
