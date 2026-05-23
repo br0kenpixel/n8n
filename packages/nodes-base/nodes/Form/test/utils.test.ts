@@ -2578,6 +2578,19 @@ describe('validateResponseModeConfiguration', () => {
 			expect(result[0].html).toBe('<div>Safe content</div>');
 		});
 
+		it('should preserve inline styles in html fields', async () => {
+			const result = prepareFormFields([
+				{
+					fieldLabel: 'Custom HTML',
+					fieldType: 'html',
+					elementName: 'test',
+					html: '<div style="color: red; text-align: center;">Styled content</div><script>alert("XSS")</script>',
+				},
+			]);
+
+			expect(result[0].html).toBe('<div style="color:red;text-align:center">Styled content</div>');
+		});
+
 		it('should not modify html fields when html is empty', async () => {
 			const result = prepareFormFields([
 				{

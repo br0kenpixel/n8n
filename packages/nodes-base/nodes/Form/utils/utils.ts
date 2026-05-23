@@ -38,7 +38,10 @@ import type { FormTriggerData, FormField } from '../interfaces';
 const BASE64_IMAGE_DATA_URL =
 	/^data:image\/(?:png|jpeg|jpg|gif|webp|bmp|avif);base64,[a-z0-9+/]+={0,2}$/i;
 
-export function sanitizeHtml(text: string) {
+export function sanitizeHtml(
+	text: string,
+	{ allowStyles = false }: { allowStyles?: boolean } = {},
+) {
 	return sanitize(text, {
 		allowedTags: [
 			'b',
@@ -81,6 +84,7 @@ export function sanitizeHtml(text: string) {
 			'center',
 		],
 		allowedAttributes: {
+			...(allowStyles ? { '*': ['style'] } : {}),
 			a: ['href', 'target', 'rel'],
 			img: ['src', 'alt', 'width', 'height'],
 			video: ['controls', 'autoplay', 'loop', 'muted', 'poster', 'width', 'height'],
@@ -134,7 +138,7 @@ export const handleNewlines = (text: string) => {
 export const prepareFormFields = (fields: FormFieldsParameter) => {
 	return fields.map((field) => {
 		if (field.fieldType === 'html' && field.html) {
-			field.html = sanitizeHtml(field.html);
+			field.html = sanitizeHtml(field.html, { allowStyles: true });
 		}
 		if (field.fieldType === 'hiddenField') {
 			field.fieldLabel = field.fieldName as string;
