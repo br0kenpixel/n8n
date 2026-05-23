@@ -205,8 +205,10 @@ const completionProperties = updateDisplayOptions(
 			type: 'string',
 			default: '',
 			typeOptions: {
-				rows: 2,
+				editor: 'htmlEditor',
+				rows: 4,
 			},
+			noDataExpression: false,
 			displayOptions: {
 				show: {
 					respondWith: ['text', 'returnBinary'],
