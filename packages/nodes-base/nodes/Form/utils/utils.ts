@@ -57,6 +57,7 @@ export function sanitizeHtml(text: string) {
 			'h4',
 			'h5',
 			'h6',
+			'hr',
 			'u',
 			'sub',
 			'sup',
@@ -76,6 +77,7 @@ export function sanitizeHtml(text: string) {
 			'tr',
 			'th',
 			'br',
+			'textarea',
 		],
 		allowedAttributes: {
 			a: ['href', 'target', 'rel'],
