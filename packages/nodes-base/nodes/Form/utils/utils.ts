@@ -100,6 +100,7 @@ export function sanitizeHtml(
 			source: ['src', 'type'],
 			td: ['colspan', 'rowspan', 'scope', 'headers'],
 			th: ['colspan', 'rowspan', 'scope', 'headers'],
+			textarea: ['readonly', 'cols', 'rows', 'disabled', 'wrap'],
 		},
 		allowedSchemes: ['https', 'http'],
 		allowedSchemesByTag: {
