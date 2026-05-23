@@ -142,6 +142,9 @@ export function sanitizeHtml(
 			'br',
 			'textarea',
 			'center',
+			'select',
+			'option',
+			'input',
 		],
 		allowedAttributes: {
 			...(allowStyles ? { '*': ['style'] } : {}),
@@ -161,6 +164,9 @@ export function sanitizeHtml(
 			td: ['colspan', 'rowspan', 'scope', 'headers'],
 			th: ['colspan', 'rowspan', 'scope', 'headers'],
 			textarea: ['readonly', 'cols', 'rows', 'disabled', 'wrap'],
+			select: ['id', 'name', 'disabled'],
+			input: ['id', 'name', 'disabled', 'type'],
+			option: ['value'],
 		},
 		allowedSchemes: ['https', 'http'],
 		allowedSchemesByTag: {
