@@ -78,6 +78,7 @@ export function sanitizeHtml(text: string) {
 			'th',
 			'br',
 			'textarea',
+			'center',
 		],
 		allowedAttributes: {
 			a: ['href', 'target', 'rel'],
