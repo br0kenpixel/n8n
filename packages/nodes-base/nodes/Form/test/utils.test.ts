@@ -105,6 +105,21 @@ describe('FormTrigger, sanitizeHtml', () => {
 		});
 	});
 
+	it('should allow base64 encoded raster images', () => {
+		const html =
+			'<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB" alt="Embedded image" width="1" height="1">';
+
+		expect(sanitizeHtml(html)).toBe(
+			'<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB" alt="Embedded image" width="1" height="1" />',
+		);
+	});
+
+	it('should remove unsupported data image sources', () => {
+		const html = '<img src="data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9YWxlcnQoMSk+" alt="SVG">';
+
+		expect(sanitizeHtml(html)).toBe('<img alt="SVG" />');
+	});
+
 	it('should allow table elements and preserve structure', () => {
 		const tableTestCases = [
 			{

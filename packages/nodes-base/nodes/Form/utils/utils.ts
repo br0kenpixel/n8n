@@ -35,6 +35,9 @@ import {
 import { FORM_TRIGGER_AUTHENTICATION_PROPERTY } from '../interfaces';
 import type { FormTriggerData, FormField } from '../interfaces';
 
+const BASE64_IMAGE_DATA_URL =
+	/^data:image\/(?:png|jpeg|jpg|gif|webp|bmp|avif);base64,[a-z0-9+/]+={0,2}$/i;
+
 export function sanitizeHtml(text: string) {
 	return sanitize(text, {
 		allowedTags: [
@@ -93,11 +96,19 @@ export function sanitizeHtml(text: string) {
 		},
 		allowedSchemes: ['https', 'http'],
 		allowedSchemesByTag: {
+			img: ['https', 'http', 'data'],
 			source: ['https', 'http'],
 			iframe: ['https', 'http'],
 		},
 		allowProtocolRelative: false,
 		transformTags: {
+			img: (tagName, attribs) => {
+				if (attribs.src?.startsWith('data:') && !BASE64_IMAGE_DATA_URL.test(attribs.src)) {
+					delete attribs.src;
+				}
+
+				return { tagName, attribs };
+			},
 			iframe: sanitize.simpleTransform('iframe', {
 				sandbox: '',
 				referrerpolicy: 'strict-origin-when-cross-origin',
