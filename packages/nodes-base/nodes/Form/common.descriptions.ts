@@ -495,7 +495,7 @@ const formOptions: INodePropertyCollection[] = [
 					editor: 'htmlEditor',
 				},
 				type: 'string',
-				noDataExpression: true,
+				noDataExpression: false,
 				default: placeholder,
 				description: 'HTML elements to display on the form page',
 				hint: 'Does not accept <code>&lt;script&gt;</code>, <code>&lt;style&gt;</code> or <code>&lt;input&gt;</code> tags',
