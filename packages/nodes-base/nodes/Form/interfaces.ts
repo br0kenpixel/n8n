@@ -1,5 +1,10 @@
 import type { GenericValue } from 'n8n-workflow';
 
+export type FormSelectOption = {
+	label: string;
+	value: string;
+};
+
 export type FormField = {
 	id: string;
 	errorId: string;
@@ -13,7 +18,7 @@ export type FormField = {
 	isTextarea?: boolean;
 
 	isSelect?: boolean;
-	selectOptions?: string[];
+	selectOptions?: FormSelectOption[];
 
 	isMultiSelect?: boolean;
 	radioSelect?: 'radio';

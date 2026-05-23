@@ -316,10 +316,44 @@ const formOptions: INodePropertyCollection[] = [
 						name: 'values',
 						values: [
 							{
-								displayName: 'Option',
+								displayName: 'Displayed Value',
 								name: 'option',
 								type: 'string',
 								default: '',
+								description: 'Text shown in the dropdown',
+							},
+							{
+								displayName: 'Actual Value',
+								name: 'optionValue',
+								type: 'string',
+								default: '',
+								description:
+									'Value returned when this option is selected. Leave empty to use the displayed value.',
+							},
+							{
+								displayName: 'Actual Value Type',
+								name: 'optionValueType',
+								type: 'options',
+								default: 'string',
+								description: 'Type to convert the actual value to in form submissions',
+								options: [
+									{
+										name: 'String',
+										value: 'string',
+									},
+									{
+										name: 'Number',
+										value: 'number',
+									},
+									{
+										name: 'Boolean',
+										value: 'boolean',
+									},
+									{
+										name: 'JSON',
+										value: 'json',
+									},
+								],
 							},
 						],
 					},

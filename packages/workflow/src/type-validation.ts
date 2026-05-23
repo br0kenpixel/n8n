@@ -203,6 +203,47 @@ const ALLOWED_FIELD_TYPES = [
 	'hiddenField',
 ];
 
+const ALLOWED_FORM_FIELD_OPTION_KEYS = ['option', 'optionValue', 'optionValueType'];
+const ALLOWED_FORM_FIELD_OPTION_VALUE_TYPES = ['string', 'number', 'boolean', 'json'];
+
+function validateFormFieldOption(
+	option: Record<string, unknown>,
+	fieldIndex: number,
+	optionIndex: number,
+) {
+	const hasInvalidKey = Object.keys(option).some(
+		(optionKey) => !ALLOWED_FORM_FIELD_OPTION_KEYS.includes(optionKey),
+	);
+	const hasInvalidValue =
+		option.optionValue !== undefined &&
+		!['string', 'number', 'boolean', 'object'].includes(typeof option.optionValue);
+	const hasInvalidValueType =
+		option.optionValueType !== undefined &&
+		(typeof option.optionValueType !== 'string' ||
+			!ALLOWED_FORM_FIELD_OPTION_VALUE_TYPES.includes(option.optionValueType));
+
+	if (
+		hasInvalidKey ||
+		typeof option.option !== 'string' ||
+		hasInvalidValue ||
+		hasInvalidValueType
+	) {
+		throw new ApplicationError(
+			`Field dropdown in field ${fieldIndex} has an invalid option ${optionIndex}`,
+		);
+	}
+}
+
+function validateFormFieldOptions(fieldOptions: unknown, fieldIndex: number) {
+	const options = (fieldOptions as { [key: string]: unknown }).values as Array<
+		Record<string, unknown>
+	>;
+
+	for (const [optionIndex, option] of options.entries()) {
+		validateFormFieldOption(option, fieldIndex, optionIndex);
+	}
+}
+
 export const tryToParseJsonToFormFields = (value: unknown): FormFieldsParameter => {
 	const fields: FormFieldsParameter = [];
 
@@ -245,17 +286,7 @@ export const tryToParseJsonToFormFields = (value: unknown): FormFieldsParameter 
 						);
 					}
 
-					for (const [optionIndex, option] of (
-						(field[key] as { [key: string]: unknown }).values as Array<{
-							[key: string]: { option: string };
-						}>
-					).entries()) {
-						if (Object.keys(option).length !== 1 || typeof option.option !== 'string') {
-							throw new ApplicationError(
-								`Field dropdown in field ${index} has an invalid option ${optionIndex}`,
-							);
-						}
-					}
+					validateFormFieldOptions(field[key], index);
 				}
 			}
 

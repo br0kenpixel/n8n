@@ -5,3 +5,4 @@ This fork has the following mods/patches:
 - [x] Made `Custom HTML` in Forms allow expression mode with editor/preview.
 - [x] Made `Form Description` and `Completion Message` HTML values.
 - [x] Made `Form Description` and `Completion Message` accept inline styles.
+- [x] Made `Dropdown` in Forms allow setting a separate value for display and submission.

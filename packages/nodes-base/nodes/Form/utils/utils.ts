@@ -33,10 +33,70 @@ import {
 	validateWebhookAuthentication,
 } from '../../Webhook/utils';
 import { FORM_TRIGGER_AUTHENTICATION_PROPERTY } from '../interfaces';
-import type { FormTriggerData, FormField } from '../interfaces';
+import type { FormTriggerData, FormField, FormSelectOption } from '../interfaces';
 
 const BASE64_IMAGE_DATA_URL =
 	/^data:image\/(?:png|jpeg|jpg|gif|webp|bmp|avif);base64,[a-z0-9+/]+={0,2}$/i;
+
+type FormFieldOption = NonNullable<FormFieldsParameter[number]['fieldOptions']>['values'][number];
+type FormResponseValue = string | number | boolean | object | null;
+
+function hasDropdownActualValue(option: FormFieldOption) {
+	return (
+		option.optionValue !== undefined && option.optionValue !== null && option.optionValue !== ''
+	);
+}
+
+function getDropdownActualValue(option: FormFieldOption): FormResponseValue {
+	if (!hasDropdownActualValue(option)) return option.option;
+
+	switch (option.optionValueType) {
+		case 'number': {
+			const numberValue = Number(option.optionValue);
+			return Number.isNaN(numberValue) ? toFormResponseValue(option.optionValue) : numberValue;
+		}
+		case 'boolean':
+			return option.optionValue === true || String(option.optionValue).toLowerCase() === 'true';
+		case 'json':
+			return typeof option.optionValue === 'string'
+				? jsonParse<FormResponseValue>(option.optionValue, { fallbackValue: option.optionValue })
+				: toFormResponseValue(option.optionValue);
+		case 'string':
+		default:
+			return String(option.optionValue);
+	}
+}
+
+function stringifyDropdownValue(value: unknown) {
+	return typeof value === 'string' ? value : JSON.stringify(value);
+}
+
+function toFormResponseValue(value: unknown): FormResponseValue {
+	if (value === undefined || value === null) return null;
+	if (typeof value === 'object') return value;
+	if (['string', 'number', 'boolean'].includes(typeof value)) return value;
+
+	return String(value);
+}
+
+function getDropdownSelectOption(option: FormFieldOption): FormSelectOption {
+	return {
+		label: option.option,
+		value: stringifyDropdownValue(getDropdownActualValue(option)),
+	};
+}
+
+function getDropdownSubmittedValue(
+	field: FormFieldsParameter[number],
+	value: unknown,
+): FormResponseValue {
+	const selectedValue = String(value);
+	const selectedOption = field.fieldOptions?.values.find(
+		(option) => getDropdownSelectOption(option).value === selectedValue,
+	);
+
+	return selectedOption ? getDropdownActualValue(selectedOption) : toFormResponseValue(value);
+}
 
 export function sanitizeHtml(
 	text: string,
@@ -299,7 +359,7 @@ export function prepareFormData({
 		} else if (fieldType === 'dropdown') {
 			input.isSelect = true;
 			const fieldOptions = field.fieldOptions?.values ?? [];
-			input.selectOptions = fieldOptions.map((e) => e.option);
+			input.selectOptions = fieldOptions.map(getDropdownSelectOption);
 		} else if (fieldType === 'textarea') {
 			input.isTextarea = true;
 		} else if (fieldType === 'html') {
@@ -391,6 +451,9 @@ export function addFormResponseDataToReturnItem(
 
 		if (field.fieldType === 'number') {
 			value = Number(value);
+		}
+		if (field.fieldType === 'dropdown') {
+			value = getDropdownSubmittedValue(field, value);
 		}
 		if (field.fieldType === 'text') {
 			value = String(value).trim();

@@ -372,6 +372,21 @@ describe('Type Validation', () => {
 			const fields = tryToParseJsonToFormFields(json);
 			expect(fields).toEqual([{ fieldType: 'html', html: '<div>test</div>' }]);
 		});
+
+		it('should parse dropdown field options with typed actual values', () => {
+			const json =
+				'[{"fieldType":"dropdown","fieldOptions":{"values":[{"option":"Hello","optionValue":0,"optionValueType":"number"}]}}]';
+			const fields = tryToParseJsonToFormFields(json);
+
+			expect(fields).toEqual([
+				{
+					fieldType: 'dropdown',
+					fieldOptions: {
+						values: [{ option: 'Hello', optionValue: 0, optionValueType: 'number' }],
+					},
+				},
+			]);
+		});
 	});
 
 	describe('binary', () => {

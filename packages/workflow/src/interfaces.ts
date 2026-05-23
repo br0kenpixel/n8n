@@ -3550,7 +3550,13 @@ export type FormFieldsParameter = Array<{
 	elementName?: string;
 	fieldType?: string;
 	requiredField?: boolean;
-	fieldOptions?: { values: Array<{ option: string }> };
+	fieldOptions?: {
+		values: Array<{
+			option: string;
+			optionValue?: string | number | boolean | object | null;
+			optionValueType?: 'string' | 'number' | 'boolean' | 'json';
+		}>;
+	};
 	multiselect?: boolean;
 	multipleFiles?: boolean;
 	acceptFileTypes?: string;

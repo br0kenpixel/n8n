@@ -887,7 +887,10 @@ describe('FormTrigger, prepareFormData', () => {
 					defaultValue: '',
 					placeholder: undefined,
 					isSelect: true,
-					selectOptions: ['Male', 'Female'],
+					selectOptions: [
+						{ label: 'Male', value: 'Male' },
+						{ label: 'Female', value: 'Female' },
+					],
 				},
 				{
 					id: 'field-3',
@@ -928,6 +931,39 @@ describe('FormTrigger, prepareFormData', () => {
 			buttonLabel: 'Submit',
 			redirectUrl: 'https://example.com/thank-you',
 		});
+	});
+
+	it('should map dropdown options with typed actual values', () => {
+		const formFields: FormFieldsParameter = [
+			{
+				fieldLabel: 'Greeting',
+				fieldType: 'dropdown',
+				fieldOptions: {
+					values: [
+						{ option: 'Hello', optionValue: '0', optionValueType: 'number' },
+						{ option: 'Goodbye', optionValue: 'false', optionValueType: 'boolean' },
+					],
+				},
+			},
+		];
+
+		const result = prepareFormData({
+			formTitle: 'Test Form',
+			formDescription: '',
+			formSubmittedText: '',
+			redirectUrl: undefined,
+			formFields,
+			testRun: false,
+			query: {},
+			instanceId: 'test-instance',
+			useResponseData: true,
+			buttonLabel: 'Submit',
+		});
+
+		expect(result.formFields[0].selectOptions).toEqual([
+			{ label: 'Hello', value: '0' },
+			{ label: 'Goodbye', value: 'false' },
+		]);
 	});
 
 	it('should handle missing optional fields gracefully', () => {
@@ -2677,6 +2713,22 @@ describe('addFormResponseDataToReturnItem', () => {
 
 		addFormResponseDataToReturnItem(returnItem, formFields, bodyData);
 		expect(returnItem.json['Number Field']).toBe(42);
+	});
+
+	it('should return the typed actual value for dropdown fields', () => {
+		const formFields: FormFieldsParameter = [
+			{
+				fieldLabel: 'Greeting',
+				fieldType: 'dropdown',
+				fieldOptions: {
+					values: [{ option: 'Hello', optionValue: '0', optionValueType: 'number' }],
+				},
+			},
+		];
+		const bodyData: IDataObject = { 'field-0': '0' };
+
+		addFormResponseDataToReturnItem(returnItem, formFields, bodyData);
+		expect(returnItem.json.Greeting).toBe(0);
 	});
 
 	it('should trim text fields', () => {
